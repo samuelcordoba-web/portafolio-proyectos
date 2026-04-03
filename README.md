@@ -9,3 +9,7 @@ Personalización de pedidos: Los usuarios pueden hacer pedidos personalizados de
 Carrito de compras: Los usuarios pueden agregar productos a su carrito y realizar un pedido.
 Formulario de contacto: Los usuarios pueden enviar consultas o solicitudes específicas a la pastelería.
 Visualización en dispositivos móviles: La página está optimizada para funcionar correctamente en dispositivos móviles.
+
+published on a february 17 2026
+
+melissacakes.netlify.app
