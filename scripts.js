@@ -284,7 +284,6 @@ function getBase64Image(url, callback) {
         });
 }
 
-// Función para eliminar items del carrito
 function removeFromCart(index) {
     cart.splice(index, 1);
     updateCartModalContent();
