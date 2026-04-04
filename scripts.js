@@ -1,5 +1,3 @@
-
-// ========== DARK MODE TOGGLE ========== //
 function toggleDarkMode() {
     const body = document.body;
     const btn = document.getElementById('darkModeToggle');
@@ -16,7 +14,6 @@ function toggleDarkMode() {
     }
 }
 
-// Initialize dark mode from saved preference
 document.addEventListener('DOMContentLoaded', function () {
     const darkModePref = localStorage.getItem('darkMode');
     if (darkModePref === 'enabled') {
@@ -33,7 +30,7 @@ document.addEventListener('DOMContentLoaded', function () {
 let cart = [];
 let selectedImageUrl = "";
 let currentQuantity = 1;
-let currentProductMinDays = 7; // mínimo de días para el modal de producto.
+let currentProductMinDays = 7;
 let customCakeOptions = {
     size: 'Large (20-25)',
     bizcocho: 'Vanilla',
@@ -54,7 +51,6 @@ const PAYPAL_ME_USER = 'paycakesmellisacakes';
 const PRICES_IN = 'AUD';
 const IMGBB_API_KEY = 'b8f77766253714bfef01474a8970e7ed';
 
-// Devuelve el total convertido a la moneda que necesita PayPal.me (ej. USD)
 function getCartTotalForPayPalMe() {
     let total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
 
@@ -65,24 +61,20 @@ function getCartTotalForPayPalMe() {
     return Number(total).toFixed(2);
 }
 
-// Lógica para ocultar/mostrar el encabezado al hacer scroll
 let lastScrollY = window.scrollY;
 const header = document.querySelector('.header');
-const scrollThreshold = 10; // Sensibilidad al scroll
+const scrollThreshold = 10;
 
 window.addEventListener('scroll', () => {
     const currentScrollY = window.scrollY;
 
-    // Si el scroll es menor al threshold, no hacer nada (prevenir parpadeos)
     if (Math.abs(currentScrollY - lastScrollY) < scrollThreshold) {
         return;
     }
 
     if (currentScrollY > lastScrollY && currentScrollY > 100) {
-        // Scrolling hacia abajo - ocultar header
         header.classList.add('header-hidden');
     } else {
-        // Scrolling hacia arriba - mostrar header
         header.classList.remove('header-hidden');
     }
 
@@ -90,7 +82,6 @@ window.addEventListener('scroll', () => {
 });
 
 
-// Actualiza el href y texto del enlace PayPal.me
 function updatePayPalMeLink() {
     const link = document.getElementById('paypalme-link');
     const warn = document.getElementById('paypalme-warning');
@@ -98,12 +89,10 @@ function updatePayPalMeLink() {
 
     const amount = getCartTotalForPayPalMe();
 
-    // Construye el URL (PayPal.me admite números con decimales, e.g. /25.50)
     link.href = `https://paypal.me/${PAYPAL_ME_USER}/${amount}`;
     link.textContent = `Pay ${amount} AUD with PayPal.me`;
 
 
-    // Mensaje auxiliar (opcional): si carrito vacío muestra aviso
     if (Number(amount) === 0) {
         if (warn) warn.textContent = 'Your cart is empty — add products before paying.';
         link.style.opacity = '0.6';
@@ -120,13 +109,12 @@ async function uploadImageToImgBB(dataUrl) {
     try {
         console.log('Iniciando subida a ImgBB...');
 
-        // Validar que tenemos una API key
+
         if (!IMGBB_API_KEY || IMGBB_API_KEY === '0b369f41c7edd5d9d48c44376b8c58e2') {
             console.warn('⚠️ Using example API key. Please configure your own API key.');
             alert('⚠️ IMPORTANT: You need to configure your ImgBB API Key in scripts.js for images to upload.');
         }
 
-        // Extraer la parte base64 de la data URL
         const base64Data = dataUrl.split(',')[1];
 
         if (!base64Data) {
@@ -134,15 +122,13 @@ async function uploadImageToImgBB(dataUrl) {
             return null;
         }
 
-        // Crear el FormData para ImgBB
         const formData = new FormData();
         formData.append('key', IMGBB_API_KEY);
         formData.append('image', base64Data);
-        formData.append('expiration', 15552000); // 180 días (6 meses)
+        formData.append('expiration', 15552000);
 
         console.log('Subiendo imagen a ImgBB... (esto puede tomar unos segundos)');
 
-        // Hacer la petición a ImgBB con timeout
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 segundos timeout
 
@@ -180,9 +166,7 @@ async function uploadImageToImgBB(dataUrl) {
 }
 
 
-// FUNCIONES AUXILIARES //
 
-// Función para mostrar notificaciones
 function showNotification(message) {
     const notification = document.createElement('div');
     notification.className = 'notification';
@@ -195,20 +179,17 @@ function showNotification(message) {
     }, 3000);
 }
 
-// Función para actualizar el botón del carrito
 function updateCartButton() {
     const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
     document.querySelector('.cart-btn').innerHTML = `🛒 Cart (${totalItems})`;
 }
 
-// Función para cambiar cantidad
 function changeQuantity(change) {
     currentQuantity = Math.max(1, currentQuantity + change);
     document.getElementById('quantity').textContent = currentQuantity;
     updateAddToCartPrice();
 }
 
-// Función para seleccionar opciones principales
 function selectOption(button, type) {
     const buttons = button.parentElement.querySelectorAll('.option-btn');
     buttons.forEach(btn => btn.classList.remove('active'));
@@ -218,23 +199,19 @@ function selectOption(button, type) {
     updateAddToCartPrice();
 }
 
-// ========== FUNCIONES PRINCIPALES ========== //
 
-// Función para alternar el menú móvil
 function toggleMobileMenu() {
     const menu = document.querySelector('.nav-menu');
     menu.classList.toggle('active');
 
-    // Cambiar el icono del botón
     const btn = document.querySelector('.mobile-menu-btn');
     if (menu.classList.contains('active')) {
-        btn.textContent = '✕'; // Icono de cerrar
+        btn.textContent = '✕';
     } else {
-        btn.textContent = '☰'; // Icono de menú
+        btn.textContent = '☰';
     }
 }
 
-// Función para cerrar el menú al seleccionar una opción
 function closeMobileMenu() {
     const menu = document.querySelector('.nav-menu');
     menu.classList.remove('active');
@@ -242,7 +219,6 @@ function closeMobileMenu() {
 }
 
 
-// Cerrar menú al hacer clic fuera de él
 document.addEventListener('click', function (event) {
     const menu = document.querySelector('.nav-menu');
     const btn = document.querySelector('.mobile-menu-btn');
@@ -253,7 +229,6 @@ document.addEventListener('click', function (event) {
     }
 });
 
-// Función para agregar al carrito (versión optimizada)
 function addToCart() {
     if (!validateDate(document.querySelector('#productModal input[type="date"]').value)) {
         return;
@@ -288,7 +263,7 @@ function addToCart() {
             : 'Pick Up',
         phone: phone,
         customerName: name,
-        image: selectedImageUrl // ✅ Ahora se usa la URL pública correcta
+        image: selectedImageUrl
     };
 
     cart.push(newItem);
@@ -326,9 +301,7 @@ function validateDate(selectedDate) {
     minDate.setDate(today.getDate() + days);
 
     if (new Date(selectedDate) < minDate) {
-        // Cerrar el modal primero
         closeModal();
-        // Mostrar notificación con el mínimo específico
         setTimeout(() => {
             showNotification(`⚠️ Orders require at least ${days} days notice`);
         }, 100);
@@ -344,7 +317,6 @@ function closeModal() {
     document.body.style.overflow = 'auto';
 }
 
-// Función para enviar la solicitud de pastel personalizado
 function submitCustomCakeRequest() {
     const description = document.getElementById('cakeDescription').value;
     const date = document.getElementById('customCakeDate').value;
@@ -357,7 +329,6 @@ function submitCustomCakeRequest() {
         return;
     }
 
-    // Crear objeto FormData para enviar la imagen
     const formData = new FormData();
     formData.append('description', description);
     formData.append('date', date);
@@ -368,10 +339,8 @@ function submitCustomCakeRequest() {
         formData.append('referenceImage', imageInput.files[0]);
     }
 
-    // Por ahora solo mostraremos una notificación
     showNotification('✅ Your custom cake request has been sent! We will contact you soon.');
 
-    // Cerrar el modal y limpiar los campos
     closeModal();
     document.getElementById('cakeDescription').value = '';
     document.getElementById('customCakeDate').value = '';
@@ -381,17 +350,14 @@ function submitCustomCakeRequest() {
     document.getElementById('imagePreview').style.display = 'none';
 }
 
-// Nuevas funciones para manejar pagos
 let selectedPaymentMethod = null;
 
-// Función para proceder al pago
 function proceedToCheckout() {
     if (cart.length === 0) {
         showNotification('Your cart is empty');
         return;
     }
 
-    // Validar que cada ítem cumpla su mínimo (2 días solo para tortas rápidas, 7 para demás)
     const today = new Date();
     for (const item of cart) {
         const requiredDays = typeof item.minDays === 'number' ? item.minDays : 7;
@@ -406,7 +372,6 @@ function proceedToCheckout() {
     document.getElementById('paymentModal').style.display = 'block';
     document.body.style.overflow = 'hidden';
 
-    // Resetear selección de pago
     selectedPaymentMethod = null;
     document.querySelectorAll('.payment-option').forEach(option => {
         option.style.border = '2px solid #e9ecef';
@@ -422,7 +387,6 @@ function calculateCartTotalUSD() {
 }
 
 
-// Función para seleccionar método de pago
 function selectPaymentMethod(method) {
     selectedPaymentMethod = method;
 
@@ -432,21 +396,17 @@ function selectPaymentMethod(method) {
 
     event.currentTarget.style.border = '2px solid #00b894';
 
-    // Ocultar todos los contenedores primero
     document.getElementById('paypal-button-container').style.display = 'none';
     document.getElementById('paypalme-info').style.display = 'none';
 
     const completeBtn = document.getElementById('completeOrderBtn');
 
-    // Si selecciona PayPal.me
     if (method === 'paypalme') {
         document.getElementById('paypalme-info').style.display = 'block';
         updatePayPalMeLink();
 
-        // Bloquear botón de completar pedido
         completeBtn.disabled = true;
 
-        // Si no existe el checkbox, crearlo
         if (!document.getElementById('paypalme-confirm')) {
             const confirmBox = document.createElement('div');
             confirmBox.innerHTML = `
@@ -462,25 +422,20 @@ function selectPaymentMethod(method) {
             });
         }
     } else {
-        // Otros métodos de pago → botón habilitado
         completeBtn.disabled = false;
     }
 
-    // Mostrar siempre el botón "Completar pedido"
     completeBtn.style.display = 'block';
 }
 
-// Función para renderizar el botón de PayPal
 function renderPayPalButton() {
     try {
-        // Limpiar contenedor previo
         const container = document.getElementById('paypal-button-container');
         container.innerHTML = '';
 
-        // Mostrar loader mientras se carga
         container.innerHTML = '<div class="paypal-loading">Loading PayPal...</div>';
 
-        const total = calculateCartTotal() / 100; // Convertir a dólares
+        const total = calculateCartTotal() / 100;
 
         paypal.Buttons({
             style: {
@@ -538,7 +493,6 @@ function renderPayPalButton() {
     }
 }
 
-// ========== FUNCIÓN MEJORADA PARA COMPLETAR EL PEDIDO ========== //
 async function completeOrder() {
     if (!selectedPaymentMethod) {
         showNotification('Please select a payment method');
@@ -568,7 +522,6 @@ async function completeOrder() {
         console.log('Número de items en carrito:', cart.length);
         console.log('Método de pago:', selectedPaymentMethod);
 
-        // Verificar si hay pasteles personalizados con imágenes
         const customCakesWithImages = cart.filter(item =>
             item.custom && item.image && typeof item.image === 'string' && item.image.startsWith('data:')
         );
@@ -580,7 +533,6 @@ async function completeOrder() {
 
 
 
-        // Usar la función mejorada que sube imágenes y formatea el correo
         await submitOrderWithAttachments(endpoint);
 
         console.log('✅ Pedido enviado exitosamente');
@@ -617,7 +569,6 @@ async function completeOrder() {
 
         showNotification(errorMessage);
 
-        // Log adicional para depuración
         console.log('Contenido del carrito al fallar:');
         cart.forEach((item, index) => {
             console.log(`Item ${index + 1}:`, {
@@ -632,13 +583,12 @@ async function completeOrder() {
 }
 
 
-// Función para renderizar el botón de PayPal correctamente
 function renderPayPalButton() {
     try {
         const container = document.getElementById('paypal-button-container');
         container.innerHTML = '<div class="paypal-loading">Loading PayPal...</div>';
 
-        const total = calculateCartTotal() / 100; // Convertir a dólares
+        const total = calculateCartTotal() / 100;
 
         paypal.Buttons({
             style: {
@@ -661,9 +611,7 @@ function renderPayPalButton() {
             onApprove: function (data, actions) {
                 return actions.order.capture().then(function (details) {
                     console.log('Transaction completed:', details);
-                    // Mostrar notificación de éxito
                     showNotification('✅ PayPal payment completed successfully!');
-                    // Completar el pedido
                     completeOrder(true);
                 });
             },
@@ -692,7 +640,7 @@ function guardarPedidoEnHistorial() {
         const newOrder = {
             date: new Date().toISOString(),
             method: selectedPaymentMethod,
-            items: [...cart], // Copia del carrito actual
+            items: [...cart],
             total: calculateCartTotal()
         };
         storedOrders.push(newOrder);
@@ -702,7 +650,7 @@ function guardarPedidoEnHistorial() {
     }
 }
 
-// Mostrar los pedidos guardados
+
 function verPedidos() {
     const contenedor = document.getElementById('listaPedidos');
     const pedidos = JSON.parse(localStorage.getItem('pedidosMelissaCake')) || [];
@@ -735,7 +683,7 @@ function verPedidos() {
     document.body.style.overflow = 'hidden';
 }
 
-// Función para calcular el total del carrito
+
 function calculateCartTotal() {
     return cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
 }
@@ -744,21 +692,18 @@ function calculateCartTotal() {
 
 
 function openCartModal() {
-    // Verifica que el modal exista
     const modal = document.getElementById('cartModal');
     if (!modal) {
         console.error('No se encontró el modal del carrito');
         return;
     }
 
-    // Actualiza el contenido antes de mostrar
     updateCartModalContent();
 
-    // Muestra el modal
     modal.style.display = 'block';
     document.body.style.overflow = 'hidden';
 
-    console.log('Modal abierto correctamente'); // Para depuración
+    console.log('Modal abierto correctamente');
 }
 function closeModal() {
     const modals = document.querySelectorAll('.modal');
@@ -781,7 +726,6 @@ function selectDeliveryOption(button, option) {
 function updateAddToCartPrice() {
     let price = selectedOptions.basePrice || 120;
 
-    // Ajustes por tamaño
     if (selectedOptions.size.includes('8-10')) price *= 1.2;
     else if (selectedOptions.size.includes('12-15')) price *= 1.3;
     else if (selectedOptions.size.includes('20-25')) price *= 1.5;
@@ -790,15 +734,12 @@ function updateAddToCartPrice() {
     else if (selectedOptions.size.includes('50-60')) price *= 2.5;
     else if (selectedOptions.size.includes('70-80')) price *= 3.6;
 
-    // Agregar $20 por domicilio
     if (deliveryOption === 'delivery') {
         price += 20;
     }
 
-    // Asegurar precio mínimo
     price = Math.max(120, price * currentQuantity);
 
-    // Actualizar botón
     const addToCartBtn = document.querySelector('.add-to-cart');
     addToCartBtn.textContent = `🛒 Add to Cart - $${price.toLocaleString()}`;
 }
@@ -813,24 +754,20 @@ function selectSubOption(button, type, value) {
 
 }
 
-// En scripts.js, modifica la función openProductModal
 window.openProductModal = function (productName) {
     document.getElementById('modalTitle').textContent = productName;
     document.getElementById('productModal').style.display = 'block';
     document.body.style.overflow = 'hidden';
 
-    // 🔹 Guardar la URL absoluta de la imagen del producto
     const productCard = event.currentTarget;
     const bgImage = productCard.querySelector('.product-image').style.backgroundImage;
     const imageUrl = bgImage.slice(5, -2);
     selectedImageUrl = window.location.origin + '/' + imageUrl;
 
-    // Detectar si este producto está en el carrusel de tortas rápidas y fijar min 2 días, si no 7
     const carouselEl = productCard.closest('.carousel');
     const isQuickCake = carouselEl && carouselEl.id === 'quick-cakes-carousel';
     currentProductMinDays = isQuickCake ? 2 : 7;
 
-    // Configurar fecha mínima del input de fecha solo para este modal de producto
     const prodDateInput = document.querySelector('#productModal input[type="date"]');
     if (prodDateInput) {
         const minDateTmp = new Date();
@@ -840,11 +777,9 @@ window.openProductModal = function (productName) {
         prodDateInput.value = minStr;
     }
 
-    // Reiniciar cantidad y opciones
     currentQuantity = 1;
     document.getElementById('quantity').textContent = currentQuantity;
 
-    // Establecer opciones iniciales
     selectedOptions = {
         size: '8-10 people',
         decoration: 'vintage',
@@ -854,7 +789,6 @@ window.openProductModal = function (productName) {
 
 
 
-    // Actualizar botones activos
     document.querySelectorAll('.option-btn').forEach(btn => btn.classList.remove('active'));
     document.querySelectorAll('.option-btn').forEach(btn => {
         if (btn.textContent === selectedOptions.size ||
@@ -864,21 +798,18 @@ window.openProductModal = function (productName) {
         }
     });
 
-    // Actualizar precio inicial
     updateAddToCartPrice();
 };
 
-// Cambia esta función en scripts.js
-// Configuración de todos los carruseles
+
+
 function setupCarousels() {
-    // Desactivamos el auto-scroll para control manual
     const carousels = document.querySelectorAll('.carousel');
 
     carousels.forEach(carousel => {
         const carouselId = carousel.id;
         const container = carousel.closest('.carousel-container');
 
-        // Configurar botones de navegación
         const prevBtn = container.querySelector('.prev');
         const nextBtn = container.querySelector('.next');
 
@@ -890,10 +821,8 @@ function setupCarousels() {
             nextBtn.addEventListener('click', () => scrollCarousel(carouselId, 1));
         }
 
-        // Opcional: Deshabilitar botones al llegar a los extremos
         updateNavButtons(carousel);
 
-        // Escuchar eventos de scroll para actualizar botones
         carousel.addEventListener('scroll', () => updateNavButtons(carousel));
     });
 }
@@ -912,7 +841,6 @@ function scrollCarousel(carouselId, direction) {
     });
 }
 
-// Actualizar estado de los botones de navegación
 function updateNavButtons(carousel) {
     const container = carousel.closest('.carousel-container');
     const prevBtn = container.querySelector('.prev');
@@ -920,18 +848,15 @@ function updateNavButtons(carousel) {
 
     if (!prevBtn || !nextBtn) return;
 
-    // Habilitar/deshabilitar botones según posición
     prevBtn.disabled = carousel.scrollLeft <= 10;
     nextBtn.disabled = carousel.scrollLeft + carousel.offsetWidth >= carousel.scrollWidth - 10;
 }
 
-// Inicializar todos los carruseles al cargar la página
 document.addEventListener('DOMContentLoaded', function () {
     setupCarousels();
 });
 
 
-/* ========== FUNCIONES PARA PASTELES PERSONALIZADOS ========== */
 
 function selectCustomOption(button, optionType) {
     const siblings = button.parentElement.children;
@@ -964,7 +889,6 @@ function selectCustomDeliveryOption(button, option) {
 function updateCustomCakePrice() {
     let price = 0;
 
-    // Precio por tamaño
     const customSizeInput = document.getElementById('customSizeInput');
     if (customSizeInput.value && !isNaN(customSizeInput.value)) {
         const people = parseInt(customSizeInput.value);
@@ -985,7 +909,6 @@ function updateCustomCakePrice() {
         }
     }
 
-    // Ajustes por ingredientes
     if (customCakeOptions.relleno === 'Fruit') price += 20;
     else if (customCakeOptions.relleno === 'Lemon Curd') price += 25;
     else if (customCakeOptions.relleno === 'Cream Cheese') price += 30;
@@ -998,33 +921,26 @@ function updateCustomCakePrice() {
     document.getElementById('customCakePrice').textContent = `$${price.toLocaleString()}`;
 }
 
-// Helper para convertir rutas relativas a absolutas si hace falta
 function ensureAbsoluteImageUrl(url) {
     if (!url) return '';
-    // si ya es absoluta
     if (url.startsWith('http://') || url.startsWith('https://')) return url;
-    // si viene con url("...") lo limpiamos
     if (url.startsWith('url(')) {
         url = url.slice(4).replace(/^["']|["']$/g, '');
     }
-    // si empieza con '/', lo añadimos a origin; si no, añadimos '/'
     const prefix = url.startsWith('/') ? '' : '/';
     return window.location.origin + prefix + url;
 }
 
-// Sincroniza selectedOptions con lo que está activo en el UI del modal de producto
 function syncSelectedOptionsFromUI() {
     const modal = document.getElementById('productModal');
     if (!modal) return;
 
-    // Tamaño
     const activeSize = modal.querySelector('#sizeOptions .option-btn.active');
     if (activeSize) {
         if (typeof selectedOptions === 'undefined') selectedOptions = {};
         selectedOptions.size = activeSize.textContent.trim();
     }
 
-    // Sub-opciones: Bizcocho, Relleno, Cobertura
     modal.querySelectorAll('.sub-option').forEach(sub => {
         const h = sub.querySelector('h4');
         if (!h) return;
@@ -1053,7 +969,6 @@ function dataURLtoBlob(dataurl) {
     return new Blob([u8arr], { type: mime });
 }
 
-// Tamaño máximo objetivo para adjuntos (≈1.9MB)
 const MAX_ATTACHMENT_BYTES = 1900000;
 
 function canvasToBlob(canvas, type, quality) {
@@ -1065,7 +980,6 @@ async function compressImageDataUrl(dataUrl, opts) {
     const maxDims = (opts && opts.maxDims) || [1280, 1024, 800, 640];
     const qualities = (opts && opts.qualities) || [0.8, 0.7, 0.6, 0.5, 0.4];
 
-    // Cargar imagen en memoria
     const img = await new Promise((resolve, reject) => {
         const im = new Image();
         im.onload = () => resolve(im);
@@ -1090,14 +1004,13 @@ async function compressImageDataUrl(dataUrl, opts) {
         for (const q of qualities) {
             const blob = await canvasToBlob(canvas, 'image/jpeg', q);
             if (!blob) continue;
-            bestBlob = blob; // guardar último intento válido
+            bestBlob = blob;
             if (blob.size <= maxBytes) {
-                return blob; // éxito: bajo el máximo
+                return blob;
             }
         }
     }
 
-    // Si no se logró bajar del máximo, enviar el mejor esfuerzo (más pequeño probado)
     return bestBlob || dataURLtoBlob(dataUrl);
 }
 
@@ -1105,13 +1018,10 @@ async function submitOrderWithAttachments(endpoint) {
     try {
         const fd = new FormData();
 
-        // Obtener información del cliente
         const clientName = cart.length > 0 ? cart[0].customerName : 'Cliente';
         const clientPhone = cart.length > 0 ? cart[0].phone : '';
         const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
 
-        // 1. Construir contenido para el campo "Detalles del pedido" (formato compatible)
-        // 1. Construir contenido para el campo "Detalles del pedido" (formato compatible)
         let orderDetails = `CUSTOM ORDER - MELISSA CAKES
 ========================================
 
@@ -1124,11 +1034,9 @@ async function submitOrderWithAttachments(endpoint) {
 
 `;
 
-        // 2. Construir lista de productos detallada
         let productsList = '';
 
         for (const [index, item] of cart.entries()) {
-            // Determinar si es personalizado
             const isCustom = item.custom || item.description;
 
             productsList += `
@@ -1149,19 +1057,13 @@ ${item.delivery === 'delivery' ? `• Address: ${item.address || 'Not specified'
 ${item.phone ? `• Contact Phone: ${item.phone}` : ''}
 `;
 
-            // Agregar descripción si es personalizado
             if (isCustom && item.description) {
                 productsList += `• Detailed Description: ${item.description}\n`;
             }
 
-            // Manejar imágenes
-            // Manejar imágenes
             if (item.image && typeof item.image === 'string') {
                 if (item.image.startsWith('data:')) {
-                    // Es una imagen en base64 (pastel personalizado)
 
-                    // 1. Intentar subir a ImgBB (MÉTODO PRINCIPAL)
-                    // Formspree Free NO permite adjuntar archivos directamente, así que debemos usar un link.
                     try {
                         const publicUrl = await uploadImageToImgBB(item.image);
                         if (publicUrl) {
@@ -1176,8 +1078,6 @@ ${item.phone ? `• Contact Phone: ${item.phone}` : ''}
                         console.error('Fallo subida a ImgBB:', error);
                         productsList += `• ⚠️ La imagen no se pudo subir automáticamente. (Por favor pedir foto al cliente)\n`;
 
-                        // Si falla, AÚN ASÍ adjuntamos el blob por si acaso el cliente actualiza su plan de Formspree
-                        // pero cambiamos el mensaje para no confundir.
                         try {
                             const blob = dataURLtoBlob(item.image);
                             if (index < 10) {
@@ -1186,7 +1086,6 @@ ${item.phone ? `• Contact Phone: ${item.phone}` : ''}
                         } catch (e) { }
                     }
                 } else {
-                    // Para URLs existentes (productos del catálogo)
                     productsList += `• Product Image: ${item.image}\n`;
                 }
             }
@@ -1194,7 +1093,6 @@ ${item.phone ? `• Contact Phone: ${item.phone}` : ''}
             productsList += '\n';
         }
 
-        // 3. Construir el campo principal de pedido (formato simple)
         orderDetails += productsList;
 
         orderDetails += `
@@ -1212,12 +1110,10 @@ ${item.phone ? `• Contact Phone: ${item.phone}` : ''}
 📞 [Your Phone]
 `;
 
-        // 4. Preparar campos para Formspree usando los nombres del formulario HTML
         fd.append('pedido', `Custom Order - ${clientName}`);
         fd.append('Order Details', orderDetails);
         fd.append('⚠ Notice', 'This is a custom order that requires special attention');
 
-        // Campos adicionales para Formspree
         fd.append('customerName', clientName);
         fd.append('customerPhone', clientPhone);
         fd.append('deliveryDate', cart.length > 0 ? cart[0].date : '');
@@ -1249,14 +1145,12 @@ ${item.phone ? `• Contact Phone: ${item.phone}` : ''}
                 error: errorText
             });
 
-            // Intentar enviar una versión de solo texto con todos los detalles si falla la subida de archivos
             return await sendSimpleOrder(endpoint, clientName, clientPhone, total, orderDetails);
         }
 
         const result = await response.json();
         console.log('✅ Formspree respondió:', result);
 
-        // Mostrar confirmación específica para pedidos personalizados
         showNotification(`✅ Custom order sent! We will contact you in 24h to confirm details.`);
 
         return true;
@@ -1264,7 +1158,6 @@ ${item.phone ? `• Contact Phone: ${item.phone}` : ''}
     } catch (error) {
         console.error('Error completo en submitOrderWithAttachments:', error);
 
-        // Intento de respaldo con EmailJS
         try {
             await sendBackupEmail();
             showNotification('⚠️ Using backup system. Your order has been registered.');
@@ -1276,14 +1169,11 @@ ${item.phone ? `• Contact Phone: ${item.phone}` : ''}
     }
 }
 
-// Función de respaldo para Formspree fallido (ahora con detalles completos)
 async function sendSimpleOrder(endpoint, clientName, clientPhone, total, fullDetails) {
     const simpleFd = new FormData();
 
-    // Solo campos esenciales
     simpleFd.append('pedido', `Custom Order (Text) - ${clientName}`);
 
-    // Usar los detalles completos si están disponibles
     const detailsToSend = fullDetails || `Client: ${clientName}\nPhone: ${clientPhone}\nTotal: $${total}\n\n*This is a custom order. Please check system for more details.*`;
 
     simpleFd.append('Order Details', detailsToSend);
@@ -1305,7 +1195,6 @@ async function sendSimpleOrder(endpoint, clientName, clientPhone, total, fullDet
     return await simpleResponse.json();
 }
 
-// Respaldo con EmailJS (necesitas configurarlo)
 async function sendBackupEmail() {
     try {
         const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
@@ -1319,8 +1208,8 @@ async function sendBackupEmail() {
         };
 
         await emailjs.send(
-            'service_your_service_id', // Reemplazar
-            'template_your_template_id', // Reemplazar
+            'service_your_service_id',
+            'template_your_template_id',
             templateParams
         );
 
@@ -1364,12 +1253,10 @@ function updateCartModalContent() {
         const itemTotal = item.price * item.quantity;
         total += itemTotal;
 
-        // Preparar imagen para mostrar - MEJORADO
         let imageHtml = '';
         if (item.image) {
             let imageSrc = item.image;
 
-            // Para pasteles personalizados con imagen de referencia (data URL)
             if (item.custom && imageSrc.startsWith('data:')) {
                 imageHtml = `
                     <div style="margin-top: 8px;">
@@ -1378,7 +1265,6 @@ function updateCartModalContent() {
                     </div>
                 `;
             } else {
-                // Para productos normales
                 if (imageSrc.includes('url("')) {
                     imageSrc = imageSrc.replace('url("', '').replace('")', '');
                 }
@@ -1420,7 +1306,6 @@ function updateCartModalContent() {
     document.getElementById('checkoutBtn').style.display = 'block';
 }
 
-// Función para seleccionar opciones en el modal personalizado
 function selectCustomOption(button, optionType) {
     const siblings = button.parentElement.children;
     for (let sibling of siblings) sibling.classList.remove('active');
@@ -1429,12 +1314,9 @@ function selectCustomOption(button, optionType) {
     updateCustomCakePrice();
 }
 
-// Función para actualizar el precio estimado
-// Función para actualizar el precio estimado
 function updateCustomCakePrice() {
     let price = 0;
 
-    // Precio por tamaño
     const customSizeInput = document.getElementById('customSizeInput');
     if (customSizeInput && customSizeInput.value && !isNaN(customSizeInput.value)) {
         const people = parseInt(customSizeInput.value);
@@ -1455,7 +1337,6 @@ function updateCustomCakePrice() {
         }
     }
 
-    // Ajustes por ingredientes
     if (customCakeOptions.relleno === 'Red Fruits') price += 20;
     else if (customCakeOptions.relleno === 'Lemon Curd') price += 25;
     else if (customCakeOptions.relleno === 'Cream Cheese Frosting') price += 30;
@@ -1471,7 +1352,6 @@ function updateCustomCakePrice() {
     }
 }
 
-// Función para agregar pastel personalizado al carrito
 async function addCustomCakeToCart() {
     const name = document.getElementById('customCustomerName').value.trim();
     const phone = document.getElementById('customCustomerPhone').value.trim();
@@ -1491,13 +1371,11 @@ async function addCustomCakeToCart() {
 
     const price = parseInt(document.getElementById('customCakePrice').textContent.replace(/[^0-9]/g, ''));
 
-    // Obtener imagen como data URL si existe y comprimirla
     let imageDataUrl = null;
     if (imageInput && imageInput.files && imageInput.files[0]) {
         try {
             showNotification('📸 Processing image...');
 
-            // Leer el archivo
             const rawDataUrl = await new Promise((resolve, reject) => {
                 const reader = new FileReader();
                 reader.onload = (e) => resolve(e.target.result);
@@ -1505,14 +1383,12 @@ async function addCustomCakeToCart() {
                 reader.readAsDataURL(imageInput.files[0]);
             });
 
-            // Comprimir la imagen antes de guardarla
             const compressedBlob = await compressImageDataUrl(rawDataUrl, {
-                maxBytes: 500000, // 500KB máximo
-                maxDims: [800, 600, 400], // Dimensiones más pequeñas
+                maxBytes: 500000,
+                maxDims: [800, 600, 400],
                 qualities: [0.7, 0.6, 0.5, 0.4, 0.3]
             });
 
-            // Convertir blob comprimido a data URL
             imageDataUrl = await new Promise((resolve) => {
                 const reader = new FileReader();
                 reader.onloadend = () => resolve(reader.result);
@@ -1547,8 +1423,8 @@ async function addCustomCakeToCart() {
         phone: phone,
         customerName: name,
         description: description,
-        image: imageDataUrl, // Guardar la imagen comprimida como data URL
-        custom: true // Marcador para identificar pasteles personalizados
+        image: imageDataUrl,
+        custom: true
     };
 
     cart.push(newItem);
@@ -1559,18 +1435,15 @@ async function addCustomCakeToCart() {
 
 
 
-    // Limpiar el formulario
     if (imageInput) imageInput.value = '';
     const preview = document.getElementById('customImagePreview');
     if (preview) preview.style.display = 'none';
 }
 
-// Resetear modal de pastel personalizado
 function resetCustomCakeModal() {
     const modal = document.getElementById('customCakeModal');
     if (!modal) return;
 
-    // Resetear opciones por defecto
     customCakeOptions = {
         size: 'Large (20-25)',
         bizcocho: 'Vanilla',
@@ -1579,20 +1452,17 @@ function resetCustomCakeModal() {
         delivery: 'pickup'
     };
 
-    // Limpiar campos de texto
     const inputs = ['customCustomerName', 'customCustomerPhone', 'customCakeDescription', 'customDeliveryAddress'];
     inputs.forEach(id => {
         const el = document.getElementById(id);
         if (el) el.value = '';
     });
 
-    // Limpiar imagen
     const imageInput = document.getElementById('customReferenceImage');
     if (imageInput) imageInput.value = '';
     const preview = document.getElementById('customImagePreview');
     if (preview) preview.style.display = 'none';
 
-    // Reset todos los botones de opción
     modal.querySelectorAll('.option-btn').forEach(btn => btn.classList.remove('active'));
     modal.querySelectorAll('.option-btn').forEach(btn => {
         if (btn.textContent === 'Large (20-25)' ||
@@ -1604,16 +1474,13 @@ function resetCustomCakeModal() {
         }
     });
 
-    // Ocultar info de entrega si es necesario
     const delInfo = modal.querySelector('#customDeliveryInfo');
     if (delInfo) delInfo.style.display = 'none';
 
-    // Actualizar precio y estado de rellenos
     updateCustomCakePrice();
     if (typeof toggleRellenosForTiramizu === 'function') toggleRellenosForTiramizu();
 }
 
-// Actualizar la función openCustomCakeModal para inicializar el precio
 window.openCustomCakeModal = function (type) {
     const modal = document.getElementById('customCakeModal');
     const title = document.getElementById('customCakeTitle');
@@ -1649,7 +1516,6 @@ window.openCustomCakeModal = function (type) {
 
     }
 
-    // Configurar fecha mínima
     const dateInput = document.getElementById('customCakeDeliveryDate');
     const today = new Date();
     const minDate = new Date();
@@ -1657,10 +1523,8 @@ window.openCustomCakeModal = function (type) {
     dateInput.min = minDate.toISOString().split('T')[0];
     dateInput.value = minDate.toISOString().split('T')[0];
 
-    // Configurar preview de imagen
     const imgInput = document.getElementById('customReferenceImage');
     if (imgInput) {
-        // Remover listeners anteriores para evitar duplicados
         const newImgInput = imgInput.cloneNode(true);
         imgInput.parentNode.replaceChild(newImgInput, imgInput);
 
@@ -1677,14 +1541,11 @@ window.openCustomCakeModal = function (type) {
         });
     }
 
-    // Mostrar modal
     modal.style.display = 'block';
     document.body.style.overflow = 'hidden';
 
-    // Inicializar precio
     updateCustomCakePrice();
 
-    // Escuchar cambios en tamaño personalizado
     const customSizeInput = document.getElementById('customSizeInput');
     if (customSizeInput) {
         customSizeInput.addEventListener('input', function () {
@@ -1698,7 +1559,6 @@ window.openCustomCakeModal = function (type) {
     }
 };
 
-/* ---- PARCHE FIABLE: deshabilitar rellenos cuando el bizcocho seleccionado sea tiramizu ---- */
 (function () {
     function isTiramisuText(t) {
         if (!t) return false;
@@ -1720,17 +1580,15 @@ window.openCustomCakeModal = function (type) {
         return out;
     }
 
-    // Lógica central (acotada al/los modal(es) visible(s))
     function disableOrEnableFillings() {
         try {
             const visibleModal = Array.from(document.querySelectorAll('.modal'))
                 .find(m => m && m.style && m.style.display === 'block');
 
-            if (!visibleModal) return; // Si no hay modal visible, no hacer nada.
+            if (!visibleModal) return;
 
             let isTiramisuSelected = false;
 
-            // 1. Buscar si hay un bizcocho "Tiramisú" activo en el modal visible.
             visibleModal.querySelectorAll('.sub-option').forEach(sub => {
                 const h4 = sub.querySelector('h4');
                 if (!h4) return;
@@ -1743,7 +1601,6 @@ window.openCustomCakeModal = function (type) {
                 }
             });
 
-            // 2. Obtener todos los botones de relleno dentro del modal visible.
             const fillingButtons = [];
             visibleModal.querySelectorAll('.sub-option').forEach(sub => {
                 const h4 = sub.querySelector('h4');
@@ -1754,7 +1611,6 @@ window.openCustomCakeModal = function (type) {
                 }
             });
 
-            // 3. Deshabilitar o habilitar los botones de relleno.
             fillingButtons.forEach(btn => {
                 btn.disabled = isTiramisuSelected;
                 if (isTiramisuSelected) {
@@ -1765,7 +1621,6 @@ window.openCustomCakeModal = function (type) {
                 }
             });
 
-            // 4. Si es Tiramisú, limpiar la selección de relleno guardada.
             if (isTiramisuSelected) {
                 if (visibleModal.id === 'productModal' && typeof selectedOptions !== 'undefined') {
                     selectedOptions.relleno = '';
@@ -1778,22 +1633,18 @@ window.openCustomCakeModal = function (type) {
         }
     }
 
-    // Exponer aliases (compatibilidad con tus llamadas existentes)
     window.toggleRellenosForTiramizu = disableOrEnableFillings;
     window.toggleFillingsForTiramizu = disableOrEnableFillings;
     window.toggleFillingsByActiveFlavor = disableOrEnableFillings;
 
-    // Ejecutar tras clicks en cualquier .option-btn (espera 0ms para que la clase .active se asigne)
     document.addEventListener('click', function (e) {
         if (e.target.closest && e.target.closest('.option-btn')) {
             setTimeout(disableOrEnableFillings, 0);
         }
     }, true);
 
-    // Ejecutar al cargar la página (estado inicial)
     document.addEventListener('DOMContentLoaded', disableOrEnableFillings);
 
-    // Llamar tras abrir modales - mejorado para no sobrescribir
     const originalOpenProductModal = window.openProductModal;
     const originalOpenCustomCakeModal = window.openCustomCakeModal;
 
@@ -1819,11 +1670,9 @@ window.openCustomCakeModal = function (type) {
         };
     }
 
-    // Exponer para depuración en consola
     window._debugToggleFillings = disableOrEnableFillings;
 })();
 
-// 🔧 FIX PayPal.me: asegurar método de pago válido
 const paypalMeCheckbox = document.getElementById('paypalme-confirm');
 
 if (paypalMeCheckbox) {
